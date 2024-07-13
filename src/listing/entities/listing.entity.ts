@@ -1,5 +1,5 @@
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
-import { listingImage } from './listing-image';
+import { listingImage } from './listing.image';
 
 @Entity()
 export class Listing {
