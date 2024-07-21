@@ -4,6 +4,8 @@ import { Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { User } from './entities/user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
+import { JwtPayload } from './interfaces/JwtPayload';
+import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class AuthService {
@@ -12,6 +14,7 @@ export class AuthService {
   constructor(
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
+    private readonly jwtService: JwtService
   ){
 
   }
@@ -56,10 +59,21 @@ export class AuthService {
 
      if ( ! bcrypt.compareSync(loginUserDto.password, user.password)) 
         throw new UnauthorizedException('Invalid Credential');
-     
+  
+     const token = this.getJwt({id: user.id})
 
-    return user;
+    return {...user,
+            token: token 
+    };
 
+  }
+
+
+  private  getJwt (payload: JwtPayload){
+
+    const token = this.jwtService.sign(payload);
+
+    return token;
 
   }
 
